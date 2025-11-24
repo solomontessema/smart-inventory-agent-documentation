@@ -211,7 +211,14 @@ def run_inventory_agent(user_input: str) -> str:
     })
     return result.get("output", "")
 
-print(run_inventory_agent("Check the current stock of product X."))
+```
+
+#### main.py
+
+```
+from agents.inventory_agent import run_inventory_agent
+
+print(run_inventory_agent("Search for coca cola suppliers in Dallas area."))
 ```
 
 Now the agent can use the only tool available, the supplier finder tool.
