@@ -1,7 +1,8 @@
-#### Add your API Keys, Email Address, and Email app password to the .env file
+#### Add your API Keys to the .env file
 
 ```python
 OPENAI_API_KEY=your open api key
+TAVILY_API_KEY=your tabily api key
 ```
 
 #### Create a Virtual Environment
@@ -30,6 +31,7 @@ Once activated, your terminal will show the environment name (e.g., (venv)), and
 
 #### Add the following to your  requirements.txt file:
 
+```
 langchain==0.3.27
 langchain-core==0.3.78
 langchain-community==0.3.31
@@ -38,6 +40,7 @@ langchain-text-splitters==0.3.11
 openai==2.6.0
 python-dotenv==1.1.1
 flask==3.1.2
+```
 
 #### Install Dependencies
 
@@ -55,6 +58,7 @@ git init
 
 Then, configure your .gitignore file to exclude sensitive and unnecessary files from version tracking:
 
+```
 venv/
 __pycache__/
 *.pyc
@@ -68,6 +72,7 @@ logs/
 .cache/
 *.log
 *.tmp
+```
 
 #### First Commit
 
