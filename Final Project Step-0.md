@@ -1,4 +1,8 @@
-## 📁 smart-inventory-agent (Project Structure)
+<img src="https://ionnova.com/img/ionnova_logo_2.png" alt="IONNOVA Logo" width="80" height="80" />
+
+### Step 1.
+
+#### 📁 smart-inventory-agent (Project Structure)
 
 ```
 ├── agents/
