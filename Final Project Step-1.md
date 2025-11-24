@@ -1,4 +1,3 @@
-
 ### Step 1.
 
 #### Add your API Keys to the .env file
