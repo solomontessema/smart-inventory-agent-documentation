@@ -1,3 +1,5 @@
+
+<img src="https://ionnova.com/img/ionnova_logo_2.png"/>
 #### Add your API Keys to the .env file
 
 ```python
