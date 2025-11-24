@@ -1,10 +1,10 @@
-### Add your API Keys, Email Address, and Email app password to the .env file
+#### Add your API Keys, Email Address, and Email app password to the .env file
 
 ```python
 OPENAI_API_KEY=your open api key
 ```
 
-### Create a Virtual Environment
+#### Create a Virtual Environment
 
 ```python
 python -m venv venv
@@ -12,7 +12,7 @@ python -m venv venv
 
 This creates a venv/ folder containing the Python interpreter and site packages.
 
-### Activate the Environment
+#### Activate the Environment
 
 Windows:
 
@@ -28,7 +28,7 @@ source venv/bin/activate
 
 Once activated, your terminal will show the environment name (e.g., (venv)), and all pip installs will go into this isolated space.
 
-### Add the following to your  requirements.txt file:
+#### Add the following to your  requirements.txt file:
 
 langchain==0.3.27
 langchain-core==0.3.78
@@ -39,13 +39,13 @@ openai==2.6.0
 python-dotenv==1.1.1
 flask==3.1.2
 
-### Install Dependencies
+#### Install Dependencies
 
 ```
 pip install -r requirements.txt
 ```
 
-### Git Initialization
+#### Git Initialization
 
 To enable version control and streamline collaboration, initialize Git in the root of your project:
 
@@ -69,13 +69,13 @@ logs/
 *.log
 *.tmp
 
-### First Commit
+#### First Commit
 
 git add .
 git commit -m "Initial project structure for Smart Inventory Agent"
 
 
-### Optional: Create a GitHub Repo
+#### Optional: Create a GitHub Repo
 
 ```
 git remote add origin https://github.com/yourusername/smart-inventory-agent.git
@@ -84,7 +84,7 @@ git push -u origin main
 
 This keeps your main branch clean while you builand
 
-### Agent Implementation
+#### Agent Implementation
 
 We'll start by creating the core LangChain agents using GPT-4o-mini. Your API key will be loaded from the .env file using python-dotenv.
 
@@ -100,7 +100,7 @@ load_dotenv()
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 ```
  
-### Supplier Search Tool (tools/web_searcher.py)
+#### Supplier Search Tool (tools/web_searcher.py)
 
 ```python
 import os
@@ -139,7 +139,7 @@ def web_search_tool(query: str) -> str:
 
 ```
 
-### agents/inventory_agent.py
+#### agents/inventory_agent.py
 
 ```python
 from langchain.agents import Tool, AgentExecutor, create_react_agent
