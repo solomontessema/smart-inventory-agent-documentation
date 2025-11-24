@@ -1,6 +1,7 @@
 
 <img src="https://ionnova.com/img/ionnova_logo_2.png" alt="IONNOVA Logo" width="50" height="50" />
 
+### Step 1
 
 #### Add your API Keys to the .env file
 
