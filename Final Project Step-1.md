@@ -153,6 +153,7 @@ def web_search_tool(query: str) -> str:
 ```python
 from langchain.agents import Tool, AgentExecutor, create_react_agent
 from langchain_community.chat_models import ChatOpenAI
+from tools.web_search_tool import web_search_tool
 from langchain.prompts import PromptTemplate
 from config import OPENAI_API_KEY 
 
