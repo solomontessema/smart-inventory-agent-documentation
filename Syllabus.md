@@ -1,10 +1,7 @@
-# Course Syllabus: Foundations of Agentic AI
 
-## Course Title
+<img src="https://ionnova.com/img/ionnova_banner.png" alt="banner">
 
-Foundations of Agentic AI
-
-## Course Description
+## Agentic AI Mastery
 
 This course introduces the fundamental concepts, architecture, and design principles of Agentic AI systems. Students will learn how these proactive, autonomous, and multi-step intelligent systems differ from traditional, reactive AI models. The lesson covers the core components of an agent (LLMs, tools, memory), decision-making loops (AgentExecutor), key reasoning strategies (ReAct), and the role of prompt engineering in guiding agent behavior and autonomy.
 
