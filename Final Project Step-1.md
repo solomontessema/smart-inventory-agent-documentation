@@ -1,4 +1,5 @@
-### Step 1.
+### Step 1. Creating the Web Search Tool and Adding It to the Agent
+
 
 #### Add your API Keys to the .env file
 
