@@ -1,5 +1,7 @@
 ### Creating a SQLite Database and Tables
 
+---
+
 Start a command prompt In the project’s database directory  and run sqlite3 data.db to initialize a new SQLite database named data.db.
 
 ```
