@@ -1,6 +1,9 @@
-###  Database Connector (tools/db_connector.py)
+###  Creating a database reader tool.
+
+**tools/database_reader.py**
 
 ```python
+from typing import List, Tuple, Any
 import sqlite3
 from config import DB_PATH
 
@@ -26,14 +29,6 @@ class SQLiteConnector:
             formatted = f"Table: {table} Columns: {[col[1] for col in cols]}"
             summary.append(formatted)
         return "\n".join(summary)
-
-```
-
-**tools/database_reader.py**
-
-```python
-from typing import List, Tuple, Any
-from tools.db_connector import SQLiteConnector
 
 connector = SQLiteConnector()
 

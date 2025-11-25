@@ -1,4 +1,4 @@
-### Step 1. Creating the Web Search Tool and Adding It to the Agent
+### Step 1. Creating the Web Search Tool
 
 
 #### Add your API Keys to the .env file
@@ -109,7 +109,7 @@ OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 TAVILY_API_KEY=os.getenv("TAVILY_API_KEY") 
 ```
  
-#### Supplier Search Tool (tools/web_searcher.py)
+#### Supplier Search Tool (tools/web_search_tool.py)
 
 ```python
 import os
