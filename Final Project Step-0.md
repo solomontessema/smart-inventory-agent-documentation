@@ -11,11 +11,10 @@
 │
 |                       
 ├── tools/
-│   └── database_reader.py         
-│   └── db_connector.py             
+│   └── database_reader.py                  
 │   └── email_sender.py             
 │   └── log_tracker.py             
-│   └── web_searcher.py            
+│   └── web_search_tool.py            
 │           
 |       
 |── .env                            
@@ -34,7 +33,6 @@ mkdir tools
 mkdir database
 type nul > agents\inventory_agent.py
 type nul > tools\database_reader.py
-type nul > tools\db_connector.py
 type nul > tools\web_search_tool.py
 type nul > tools\email_sender.py
 type nul > tools\log_tracker.py
