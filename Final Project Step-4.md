@@ -88,12 +88,47 @@ def send_email_tool(input_str: str) -> str:
 
 ```
 
-**Add the email_sender tool to the agent's tool list and modify the prompt template in (agents/inventory_agent.py)**
+**In tools/log_tracker.py, add the following:**
+
+```python
+import sqlite3
+from datetime import datetime
+from config import DB_PATH
+
+ 
+def track_log(action: str, details: str = "") -> str:
+ 
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+
+    timestamp = datetime.now().isoformat()
+    cursor.execute(
+        "INSERT INTO logs (timestamp, action, details) VALUES (?, ?, ?)",
+        (timestamp, action, details)
+    )
+
+    conn.commit()
+    conn.close()
+
+    return f"Logged action: {action}"
+
+
+def track_log_tool(input: str) -> str:
+    # Expect input like "Queried inventory | Checked products below threshold"
+    try:
+        action, details = input.split(" | ", 1)
+    except ValueError:
+        action, details = input, ""
+    return track_log(action.strip(), details.strip())
+```
+
+**Add the email_sender and log_tracker tools to the agent's tool list**
 
 ```python
 ...
 ...
 from tools.email_sender import send_email_tool
+from tools.log_tracker import track_log_tool
 ...
 ...
 ...
@@ -107,19 +142,48 @@ tools = [
         func=send_email_tool,
         description="Send an email using: subject || body"
     ),
+        Tool(
+        name="Log Tracker",
+        func=track_log_tool,
+        description="Record actions/results for auditing & debugging."
+    ),
 ]
 ...
 ...
-prompt_template = PromptTemplate(
-...
-...
-...
+```
 
-When using the Email Sender tool:
-- Your name is Agent Smith. Address the recipients as "Team"
+**Reploace the existing prompt template in (agents/inventory_agent.py) with the following;**
+
+```python
+
+prompt_template = PromptTemplate(
+    input_variables=["input", "tools", "tool_names"],
+    template="""
+You are a helpful assistant. Your name is Agent Smith. You have access to the following tools:
+{tools}
+To answer inventory questions use products and transactions tables. Join them if needed.
+The user's query is: {input}
+
+Use the Email Sender tool only when you are explicitly asked to send email:
+- When you do so address the recipients as "Team"
 - Format the body as professional HTML. Use clear title and heading. Include sentences, table of summary, and greetings
 
-Available tools names:{tool_names}
+You must follow the ReAct format:
+Thought: I need to determine which tool to use.
+Action: [tool_name]
+Action Input: [input to the tool]
+Observation: [Tool result]
+...
+Thought: I have the final answer. Now I must log the final outcome of the task before responding.
+Action: Log Tracker
+Action Input: Final Task Status | Status: Completed. Details: [The final answer or result summary]
+Observation: Log recorded successfully.
+Final Answer: [The answer to the user]
+
+Available tool names: {tool_names}
+
+{agent_scratchpad}
+"""
 )
 ```
 
@@ -138,3 +202,4 @@ run_inventory_agent(
 )
  
 ```
+

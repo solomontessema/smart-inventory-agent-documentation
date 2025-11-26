@@ -86,7 +86,7 @@ prompt_template = PromptTemplate(
     template="""
 You are a helpful assistant. You have access to the following tools:
 {tools}
-To answer inventory questions use products and inventory tables. Join them if needed.
+To answer inventory questions use products and transactions tables. Join them if needed.
 The user's query is: {input}
 
 You must follow the ReAct format:
