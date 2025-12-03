@@ -1,5 +1,21 @@
 ### Step 0.
 
+---
+
+The recommended way is to **re-create the project** based on the instructions in the following section.  
+However, if you prefer to clone the project directly, use the following Git command to review and modify it in your local Python environment:
+
+```bash
+git clone -b step-0 https://github.com/solomontessema/smart-inventory-agent
+cd smart-inventory-agent
+```
+
+Or, if you want to open it in Google Colab, click the badge below:
+
+<a href="https://colab.research.google.com/github/solomontessema/Agentic-AI-with-Python/blob/main/notebooks/Final%20Project/inventory_agent_step_0.ipynb" target="_parent"> <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/> </a>
+
+---
+
 #### 📁 smart-inventory-agent (Project Structure)
 
 ```
