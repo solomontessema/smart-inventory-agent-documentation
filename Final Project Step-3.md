@@ -21,6 +21,7 @@ Or, if you want to open it in Google Colab, click the badge below:
 ```python
 from typing import List, Tuple, Any
 import sqlite3
+from langchain.tools import tool
 from config import DB_PATH
 
 class SQLiteConnector:
@@ -66,8 +67,9 @@ def _format_table(cols: List[str], rows: List[Tuple[Any, ...]]) -> str:
         lines.append("|".join("" if v is None else str(v) for v in r))
     return "\n".join(lines)
 
+@tool
 def read_database_tool(sql: str) -> str:
-
+    """Execute a SQL query against the SQLite database and return formatted results."""
     if not isinstance(sql, str) or not sql.strip():
         return "Error executing SQL: empty query."
 
@@ -85,57 +87,25 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DB_PATH = os.path.join(BASE_DIR, "database", "data.db")
 ```
 
-**Modify the prompt template**
 **Add the Database Reader Tool (agents/inventory_agent.py)**
 
 ```python
-#....
-#....
-from tools.database_reader import read_database_tool
-#....
-#....
-#....
+from langchain.agents import create_agent
+from langchain_openai import ChatOpenAI
+from tools.web_search_tool import web_search_tool
+from tools.database_reader import read_database_tool # ✨ import read_database_tool
+from config import OPENAI_API_KEY 
 
-
-prompt_template = PromptTemplate(
-    input_variables=["input", "tools", "tool_names"],
-    template="""
-You are a helpful assistant. You have access to the following tools:
-{tools}
-To answer inventory questions use products and transactions tables. Join them if needed.
-The user's query is: {input}
-
-You must follow the ReAct format:
-Thought: I need to determine which tool to use.
-Action: [tool_name]
-Action Input: [input to the tool]
-Observation: [Tool result]
-...
-Thought: I have the final answer.
-Final Answer: [The answer to the user]
-
-Available tool names: {tool_names}
-
-{agent_scratchpad}
-"""
+llm = ChatOpenAI(
+    model="gpt-4o-mini",
+    temperature=0
 )
 
-
-#....
-#....
-
-tools = [
-    Tool(
-        name="Database Reader",
-        func=read_database_tool,
-        description="Execute a SQL query and return raw tabular results. Use for inventory & thresholds."
-    ),
-    Tool(
-        name="Supplier Finder",
-        func=web_search_tool,
-        description="Search suppliers by product name, barcode, or category."
-    ),
-]
+inventory_agent = create_agent(
+    model=llm, 
+    tools=[web_search_tool,read_database_tool], # ✨ Add read_database_tool
+    system_prompt="You are a helpful assistant."
+    )
 
 ```
 
@@ -143,13 +113,14 @@ tools = [
 
 ```python
 
-from agents.inventory_agent import run_inventory_agent
+from agents.inventory_agent import  inventory_agent
 
-run_inventory_agent(
-    '''
-    check our inventory, identify low stock items where total item number is < 50, 
-    search for suppliers for our low stock items if there is any lowstock item.
-    '''
-)
- 
+result = inventory_agent.invoke({"messages": [{"role": "user", 
+                                               "content": """How many distinct products are there in inventory? 
+                                               List their barcode and name. 
+                                               Search online for bulk suppliers for those products."""} ]})
+
+agent_answer = result["messages"][-1]
+print(agent_answer.content)
+
 ```
