@@ -24,6 +24,8 @@ Or, if you want to open it in Google Colab, click the badge below:
 ...
 AGENT_EMAIL_ADDRESS = your_agent_email@gmail.com
 AGENT_EMAIL_PASSWORD = gmail_app_password
+RECIPIENT_NAME = Recipient_First_Name
+RECIPIENT_EMAIL_ADDRESS = recipient_emailaddress@gmail.com
 
 ```
 
@@ -34,8 +36,10 @@ AGENT_EMAIL_PASSWORD = gmail_app_password
 ...
 ...
 ...
-AGENT_EMAIL_ADDRESS= os.getenv("AGENT_EMAIL_ADDRESS") 
-AGENT_EMAIL_PASSWORD= os.getenv("AGENT_EMAIL_PASSWORD")  
+AGENT_EMAIL_ADDRESS = os.getenv("AGENT_EMAIL_ADDRESS")
+AGENT_EMAIL_PASSWORD = os.getenv("AGENT_EMAIL_PASSWORD")
+RECIPIENT_NAME = os.getenv("RECIPIENT_NAME")
+RECIPIENT_EMAIL_ADDRESS = os.getenv("RECIPIENT_EMAIL_ADDRESS")
 ```
 
 **In tools/email_sender.py, add the following:**
@@ -141,81 +145,59 @@ def track_log_tool(input: str) -> str:
 **Add the email_sender and log_tracker tools to the agent's tool list**
 
 ```python
-...
-...
+from langchain.agents import create_agent
+from langchain_openai import ChatOpenAI
+from tools.web_search_tool import web_search_tool
+from tools.database_reader import read_database_tool
 from tools.email_sender import send_email_tool
-from tools.log_tracker import track_log_tool
-...
-...
-...
+from config import OPENAI_API_KEY 
 
-tools = [
- ...
- ...
- ...
-    Tool(
-        name="Email Sender",
-        func=send_email_tool,
-        description="Send an email using: subject || body"
-    ),
-        Tool(
-        name="Log Tracker",
-        func=track_log_tool,
-        description="Record actions/results for auditing & debugging."
-    ),
-]
-...
-...
+llm = ChatOpenAI(
+    model="gpt-4o-mini",
+    temperature=0
+)
+
+
+inventory_agent = create_agent(
+    model=llm, 
+    tools=[web_search_tool,read_database_tool,send_email_tool], 
+    system_prompt="You are a helpful assistant to manage inventory and find bulk suppliers online for products in the database. when sending email, format it well with greetings and signature. Format it well as html",
+    )
+
+from langchain.agents import create_agent
+from langchain_openai import ChatOpenAI
+from tools.web_search_tool import web_search_tool
+from tools.database_reader import read_database_tool
+from tools.email_sender import send_email_tool 
+from config import OPENAI_API_KEY 
+
+llm = ChatOpenAI(
+    model="gpt-4o-mini",
+    temperature=0
+)
+
+
+inventory_agent = create_agent(
+    model=llm, 
+    tools=[web_search_tool,read_database_tool,send_email_tool], 
+    system_prompt="You are a helpful assistant to manage inventory and find bulk suppliers online for products in the database. when sending email, format it well with greetings and signature. Format it well as html",
+    )
+
 ```
 
-**Reploace the existing prompt template in (agents/inventory_agent.py) with the following;**
+**Modify main.py as follows.**
 
 ```python
 
-prompt_template = PromptTemplate(
-    input_variables=["input", "tools", "tool_names"],
-    template="""
-You are a helpful assistant. Your name is Agent Smith. You have access to the following tools:
-{tools}
-To answer inventory questions use products and transactions tables. Join them if needed.
-The user's query is: {input}
+from agents.inventory_agent import  inventory_agent
 
-Use the Email Sender tool only when you are explicitly asked to send email:
-- When you do so address the recipients as "Team"
-- Format the body as professional HTML. Use clear title and heading. Include sentences, table of summary, and greetings
+result = inventory_agent.invoke({"messages": [{"role": "user", 
+                                               "content": """How many distinct products are there in inventory? 
+                                               List their barcode and name. 
+                                               Search online for bulk suppliers for those products and send me well formatted email. """} ]})
 
-You must follow the ReAct format:
-Thought: I need to determine which tool to use.
-Action: [tool_name]
-Action Input: [input to the tool]
-Observation: [Tool result]
-...
-Thought: I have the final answer. Now I must log the final outcome of the task before responding.
-Action: Log Tracker
-Action Input: Final Task Status | Status: Completed. Details: [The final answer or result summary]
-Observation: Log recorded successfully.
-Final Answer: [The answer to the user]
+agent_answer = result["messages"][-1]
+print(agent_answer.content)
 
-Available tool names: {tool_names}
-
-{agent_scratchpad}
-"""
-)
-```
-
-**And finally modify the input to include an email summary request.**
-
-```python
-
-...
-
-run_inventory_agent(
-    '''
-    .....
-    .....
-    send me an email summary of the low stock items and the suppliers with links. 
-    '''
-)
- 
 ```
 
