@@ -51,9 +51,11 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from email.mime.application import MIMEApplication
 from typing import Optional
+from langchain.tools import tool
 from config import (
     AGENT_EMAIL_ADDRESS,
     AGENT_EMAIL_PASSWORD,
+    RECIPIENT_EMAIL_ADDRESS
 )
 
 # If not in config, define fallbacks:
@@ -90,15 +92,14 @@ def send_email(
 
     return "Email sent successfully."
 
-
+@tool
 def send_email_tool(input_str: str) -> str:
-
-    from config import BOSS_EMAIL_ADDRESS
+    """Send an email to the recipient. Input format: 'subject || body'."""
     subject, body = [x.strip() for x in input_str.split("||", 1)]
 
     try:
         result = send_email(
-            to_address=BOSS_EMAIL_ADDRESS,
+            to_address=RECIPIENT_EMAIL_ADDRESS,
             subject=subject,
             body=body
         )
@@ -112,6 +113,7 @@ def send_email_tool(input_str: str) -> str:
 
 ```python
 import sqlite3
+from langchain.tools import tool
 from datetime import datetime
 from config import DB_PATH
 
@@ -132,9 +134,9 @@ def track_log(action: str, details: str = "") -> str:
 
     return f"Logged action: {action}"
 
-
+@tool
 def track_log_tool(input: str) -> str:
-    # Expect input like "Queried inventory | Checked products below threshold"
+    """Log actions. Input format "Queried inventory | Checked products below threshold"""
     try:
         action, details = input.split(" | ", 1)
     except ValueError:
@@ -150,6 +152,7 @@ from langchain_openai import ChatOpenAI
 from tools.web_search_tool import web_search_tool
 from tools.database_reader import read_database_tool
 from tools.email_sender import send_email_tool
+from tools.log_tracker import track_log_tool
 from config import OPENAI_API_KEY 
 
 llm = ChatOpenAI(
@@ -160,28 +163,12 @@ llm = ChatOpenAI(
 
 inventory_agent = create_agent(
     model=llm, 
-    tools=[web_search_tool,read_database_tool,send_email_tool], 
-    system_prompt="You are a helpful assistant to manage inventory and find bulk suppliers online for products in the database. when sending email, format it well with greetings and signature. Format it well as html",
+    tools=[web_search_tool,read_database_tool,send_email_tool,track_log_tool], 
+    system_prompt="""You are a helpful assistant to manage inventory and find bulk suppliers online for products in the database. 
+    when sending email, format it well with greetings and signature. Format it well as html. After completing the requested task, log your actions using the track_log_tool.""",
     )
 
-from langchain.agents import create_agent
-from langchain_openai import ChatOpenAI
-from tools.web_search_tool import web_search_tool
-from tools.database_reader import read_database_tool
-from tools.email_sender import send_email_tool 
-from config import OPENAI_API_KEY 
 
-llm = ChatOpenAI(
-    model="gpt-4o-mini",
-    temperature=0
-)
-
-
-inventory_agent = create_agent(
-    model=llm, 
-    tools=[web_search_tool,read_database_tool,send_email_tool], 
-    system_prompt="You are a helpful assistant to manage inventory and find bulk suppliers online for products in the database. when sending email, format it well with greetings and signature. Format it well as html",
-    )
 
 ```
 
