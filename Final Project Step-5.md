@@ -6,7 +6,7 @@ The recommended way is to **re-create the project** based on the instructions in
 However, if you prefer to clone the project directly, use the following Git command to review and modify it in your local Python environment:
 
 ```bash
-git clone -b step-2 https://github.com/solomontessema/smart-inventory-agent
+git clone -b step-5 https://github.com/solomontessema/smart-inventory-agent
 cd smart-inventory-agent
 ```
 
@@ -53,4 +53,14 @@ if user_input:
         st.markdown(agent_text)
 ```
 
-Open a new terminal and run `streamlit run app.py`
+Open a new terminal and run `streamlit run app.py` and ask the agent.
+
+### Scheduling a task to run main.py
+Create a new text file named `run-inventory-agent.bat`, then add the following code:
+```bat
+@echo off
+cd path_to_your_smart-inventory-agent-project_folder
+call venv\Scripts\activate.bat
+python main.py
+```
+After creating the script, schedule it to run **daily** using **Windows Task Scheduler**.
